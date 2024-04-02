@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'inscription.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'home.dart';
+import 'appli/home.dart';
+
+final SupabaseClient supabase = Supabase.instance.client;
 
 class ConnexionPage extends StatefulWidget {
   const ConnexionPage({super.key});
@@ -12,27 +14,28 @@ class ConnexionPage extends StatefulWidget {
 }
 
 class _ConnexionPageState extends State<ConnexionPage> {
-  final TextEditingController _identifiantController = TextEditingController();
+  final TextEditingController _adresseMailController = TextEditingController();
   final TextEditingController _mdpController = TextEditingController();
 
   Future<void> _connexion() async {
-    final String identifiant = _identifiantController.text.trim();
+    final String adresseMail = _adresseMailController.text.trim();
     final String mdp = _mdpController.text;
 
     // Requête de connexion à Supabase
-    final response = await Supabase.instance.client
-        .from('Utilisateur')
+    final response = await supabase
+        .from('USER')
         .select()
-        .eq('identifiant', identifiant)
+        .eq('address_mail', adresseMail)
         .eq('mdp', mdp);
 
     // Vérifiez si l'utilisateur existe
     if (response.isNotEmpty) {
+      final idU = response[0]['idU'];
       // Utilisateur trouvé, connecté avec succès
       Navigator.push(
           // ignore: use_build_context_synchronously
           context,
-          MaterialPageRoute(builder: (context) => const HomePage()));
+          MaterialPageRoute(builder: (context) => HomePagePrep(idU: idU)));
     } else {
       // Aucun utilisateur correspondant trouvé, afficher un message d'erreur
       showDialog(
@@ -67,8 +70,8 @@ class _ConnexionPageState extends State<ConnexionPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextField(
-              controller: _identifiantController,
-              decoration: const InputDecoration(labelText: 'Identifiant'),
+              controller: _adresseMailController,
+              decoration: const InputDecoration(labelText: 'Adresse mail'),
             ),
             TextField(
               controller: _mdpController,
