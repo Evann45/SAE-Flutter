@@ -1,14 +1,18 @@
+import 'package:app_bricolage/connexion.dart';
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
+import 'package:sqflite/sqflite.dart';
+import 'reservations.dart';
+import 'lesAnnonces.dart';
+import 'mesBiens.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'home.dart';
-import 'aider.dart';
-import 'demanderaide.dart';
-import '../connexion.dart';
 
 class ProfilPage extends StatefulWidget {
   final String idU;
+  final Future<Database> baseDeDonnees;
 
-  const ProfilPage({required this.idU, Key? key}) : super(key: key);
+  const ProfilPage({required this.idU, required this.baseDeDonnees, Key? key})
+      : super(key: key);
 
   @override
   _ProfilPageState createState() => _ProfilPageState();
@@ -92,19 +96,22 @@ class _ProfilPageState extends State<ProfilPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => HomePagePrep(idU: widget.idU)),
+                  builder: (context) => LesAnnoncesPrep(
+                      idU: widget.idU, baseDeDonnees: widget.baseDeDonnees)),
             );
           } else if (index == 1) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => DemanderAidePage(idU: widget.idU)),
+                  builder: (context) => ReservationsPage(
+                      idU: widget.idU, baseDeDonnees: widget.baseDeDonnees)),
             );
           } else if (index == 2) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => AiderPage(idU: widget.idU)),
+                  builder: (context) => MesBiensPage(
+                      idU: widget.idU, baseDeDonnees: widget.baseDeDonnees)),
             );
           }
         },
